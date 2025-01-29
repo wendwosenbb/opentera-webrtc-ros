@@ -3,6 +3,7 @@
 
 #include <OpenteraWebrtcNativeClient/Sources/VideoSource.h>
 #include <sensor_msgs/msg/image.hpp>
+#include <sensor_msgs/msg/compressed_image.hpp>
 
 namespace opentera
 {

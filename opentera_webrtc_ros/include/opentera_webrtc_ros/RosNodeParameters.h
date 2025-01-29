@@ -18,6 +18,7 @@ namespace opentera
         RosNodeParameters(rclcpp::Node& node);
 
         bool isStandAlone() const;
+        bool isCompressedImage() const;
         size_t videoQueueSize() const;
         size_t audioQueueSize() const;
 

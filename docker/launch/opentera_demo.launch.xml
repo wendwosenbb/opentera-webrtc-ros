@@ -9,6 +9,7 @@
     <arg name="gazebo_gui" default="false"/>
     <arg name="rtabmap_viz" default="false"/>
     <arg name="is_stand_alone" default="false"/>
+    <arg name="is_compressed_image" default="false"/>
     <arg name="camera_id" default="0"/>
     <arg name="use_outgoing_face_cropping" default="false"/>
     <arg name="use_incoming_face_cropping" default="false"/>
@@ -52,9 +53,10 @@
     <let name="webrtc_image_topic_based_on_face_cropping" unless="$(var use_incoming_face_cropping)" value="/webrtc_image"/>
 
     <!-- Front camera -->
-    <group><include file="$(find-pkg-share opentera_webrtc_ros)/launch/ros_stream_client.launch.xml">
+    <group><include file="/opt/ros/OPENTERA_WS/ros_stream_client.launch.xml">
         <arg name="name" value="topic_streamer1"/>
         <arg name="is_stand_alone" value="$(var is_stand_alone)"/>
+        <arg name="is_compressed_image" value="$(var is_compressed_image)"/>
         <arg name="can_send_audio_stream" value="true"/>
         <arg name="can_receive_audio_stream" value="false"/>
         <arg name="can_send_video_stream" value="true"/>
@@ -71,9 +73,10 @@
     </include></group>
 
     <!-- Bottom camera -->
-    <group><include file="$(find-pkg-share opentera_webrtc_ros)/launch/ros_stream_client.launch.xml">
+    <group><include file="/opt/ros/OPENTERA_WS/ros_stream_client.launch.xml">
         <arg name="name" value="topic_streamer2"/>
         <arg name="is_stand_alone" value="$(var is_stand_alone)"/>
+        <arg name="is_compressed_image" value="$(var is_compressed_image)"/>
         <arg name="can_send_audio_stream" value="true"/>
         <arg name="can_receive_audio_stream" value="false"/>
         <arg name="can_send_video_stream" value="true"/>
@@ -90,9 +93,10 @@
     </include></group>
 
     <!-- Map image stream -->
-    <group><include file="$(find-pkg-share opentera_webrtc_ros)/launch/ros_stream_client.launch.xml">
+    <group><include file="/opt/ros/OPENTERA_WS/ros_stream_client.launch.xml">
         <arg name="name" value="topic_streamer3"/>
         <arg name="is_stand_alone" value="$(var is_stand_alone)"/>
+        <arg name="is_compressed_image" value="$(var is_compressed_image)"/>
         <arg name="can_send_audio_stream" value="true"/>
         <arg name="can_receive_audio_stream" value="false"/>
         <arg name="can_send_video_stream" value="true"/>

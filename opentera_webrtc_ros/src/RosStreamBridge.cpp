@@ -222,11 +222,22 @@ void RosStreamBridge::onSignalingConnectionOpened()
 
     if (m_canSendVideoStream)
     {
-        // Video
-        m_imageSubscriber = this->create_subscription<sensor_msgs::msg::Image>(
-            "ros_image",
-            m_nodeParameters.videoQueueSize(),
-            bind_this<sensor_msgs::msg::Image>(this, &RosStreamBridge::imageCallback));
+        // Video raw
+        if(! m_nodeParameters.isCompressedImage())
+        {
+            m_imageSubscriber = this->create_subscription<sensor_msgs::msg::Image>(
+                "ros_image",
+                m_nodeParameters.videoQueueSize(),
+                bind_this<sensor_msgs::msg::Image>(this, &RosStreamBridge::imageCallback));
+        }
+        else
+        {
+            m_imageSubscriber = this->create_subscription<sensor_msgs::msg::CompressedImage>(
+                "ros_image",
+                m_nodeParameters.videoQueueSize(),
+                bind_this<sensor_msgs::msg::CompressedImage>(this, &RosStreamBridge::compressedImageCallback));
+        }
+        
     }
 }
 
@@ -340,6 +351,15 @@ void RosStreamBridge::imageCallback(const sensor_msgs::msg::Image::ConstSharedPt
         m_videoSource->sendFrame(msg);
     }
 }
+
+void RosStreamBridge::compressedImageCallback(const sensor_msgs::msg::CompressedImage::ConstSharedPtr& msg)
+{
+    if (m_videoSource)
+    {
+        m_videoSource->sendFrame(msg);
+    }
+}
+
 
 void RosStreamBridge::callAllCallBack(const std_msgs::msg::Empty::ConstSharedPtr& msg)
 {

@@ -61,6 +61,11 @@ bool RosNodeParameters::isStandAlone() const
     return m_node.get_parameter("is_stand_alone").as_bool();
 }
 
+bool RosNodeParameters::isCompressedImage() const
+{
+    return m_node.get_parameter("is_compressed_image").as_bool();
+}
+
 size_t RosNodeParameters::videoQueueSize() const
 {
     return m_node.get_parameter("video_queue_size").as_int();

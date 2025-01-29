@@ -29,6 +29,7 @@ namespace opentera
         std::shared_ptr<RosAudioSource> m_audioSource;
 
         rclcpp::Subscription<sensor_msgs::msg::Image>::SharedPtr m_imageSubscriber;
+        rclcpp::Subscription<sensor_msgs::msg::CompressedImage>::SharedPtr m_compressedimageSubscriber;
         rclcpp::Subscription<audio_utils_msgs::msg::AudioFrame>::SharedPtr m_audioSubscriber;
         rclcpp::Publisher<opentera_webrtc_ros_msgs::msg::PeerImage>::SharedPtr m_imagePublisher;
         rclcpp::Publisher<opentera_webrtc_ros_msgs::msg::PeerAudio>::SharedPtr m_audioPublisher;
@@ -80,6 +81,7 @@ namespace opentera
 
         void audioCallback(const audio_utils_msgs::msg::AudioFrame::ConstSharedPtr& msg);
         void imageCallback(const sensor_msgs::msg::Image::ConstSharedPtr& msg);
+        void compressedImageCallback(const sensor_msgs::msg::CompressedImage::ConstSharedPtr& msg);
 
         void callAllCallBack(const std_msgs::msg::Empty::ConstSharedPtr& msg);
         void micVolumeCallback(const std_msgs::msg::Float32::ConstSharedPtr& msg);
