@@ -55,3 +55,29 @@ void RosVideoSource::sendFrame(const sensor_msgs::msg::Image::ConstSharedPtr& ms
     int64_t camera_time_us = to_microseconds(msg->header.stamp);
     VideoSource::sendFrame(bgr, camera_time_us);
 }
+
+void RosVideoSource::sendFrame(const sensor_msgs::msg::CompressedImage::ConstSharedPtr& msg)
+{
+    // Decode the compressed image to a cv::Mat
+    cv::Mat compressed_image = cv::imdecode(cv::Mat(msg->data), cv::IMREAD_COLOR);
+    
+    if (compressed_image.empty())
+    {
+        RCLCPP_ERROR(rclcpp::get_logger("RosVideoSource"), "Failed to decode compressed image");
+        return;
+    }
+
+    // Convert to BGR format if needed
+    cv::Mat bgr;
+    if (msg->format.find("mono") != std::string::npos)  // Check if it's grayscale
+    {
+        cv::cvtColor(compressed_image, bgr, cv::COLOR_GRAY2BGR);
+    }
+    else
+    {
+        bgr = compressed_image;
+    }
+
+    int64_t camera_time_us = to_microseconds(msg->header.stamp);
+    VideoSource::sendFrame(bgr, camera_time_us);
+}
