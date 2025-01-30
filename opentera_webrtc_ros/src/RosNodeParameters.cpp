@@ -23,6 +23,7 @@ namespace
 RosNodeParameters::RosNodeParameters(rclcpp::Node& node) : m_node{node}
 {
     m_node.declare_parameter("is_stand_alone", true);
+    m_node.declare_parameter("is_compressed_image", false);
     m_node.declare_parameter("video_queue_size", 1);
     m_node.declare_parameter("audio_queue_size", 1);
 
