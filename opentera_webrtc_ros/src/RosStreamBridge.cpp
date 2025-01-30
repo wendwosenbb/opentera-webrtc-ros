@@ -232,7 +232,7 @@ void RosStreamBridge::onSignalingConnectionOpened()
         }
         else
         {
-            m_imageSubscriber = this->create_subscription<sensor_msgs::msg::CompressedImage>(
+            m_compressedimageSubscriber = this->create_subscription<sensor_msgs::msg::CompressedImage>(
                 "ros_image",
                 m_nodeParameters.videoQueueSize(),
                 bind_this<sensor_msgs::msg::CompressedImage>(this, &RosStreamBridge::compressedImageCallback));
