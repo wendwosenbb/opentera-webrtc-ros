@@ -123,9 +123,14 @@ RUN meson setup build \
 
 WORKDIR /opt/ros/OPENTERA_WS
 RUN apt-get update && apt-get install -y rsync
-RUN git clone https://github.com/wendwosenbb/opentera-webrtc-ros.git --recurse-submodules -b handle-compressed-image-topic-use-hardware-decoding && \
-    cd opentera-webrtc-ros && \ 
-    git reset --hard 031d48be0f8d7aef3cf656601afd528f69c5f89e && \
+# RUN git clone https://github.com/wendwosenbb/opentera-webrtc-ros.git --recurse-submodules -b handle-compressed-image-topic-use-hardware-decoding && \
+#     cd opentera-webrtc-ros && \ 
+#     git reset --hard 031d48be0f8d7aef3cf656601afd528f69c5f89e && \
+
+RUN rm -rf opentera-webrtc-ros && \
+    git clone --depth 1 https://github.com/wendwosenbb/opentera-webrtc-ros.git --recurse-submodules -b handle-compressed-image-topic-use-hardware-decoding && \
+    cd opentera-webrtc-ros && \
+    git fetch origin handle-compressed-image-topic-use-hardware-decoding && \
     cd opentera_client_ros && \
     python3 -m pip install --no-cache-dir -r requirements.txt && \
     cd ../opentera_webrtc_ros && \

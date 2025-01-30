@@ -356,7 +356,7 @@ void RosStreamBridge::compressedImageCallback(const sensor_msgs::msg::Compressed
 {
     if (m_videoSource)
     {
-        m_videoSource->sendFrame(msg);
+        m_videoSource->sendcompressedFrame(msg);
     }
 }
 

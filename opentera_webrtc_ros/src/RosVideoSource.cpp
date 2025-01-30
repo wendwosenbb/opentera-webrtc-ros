@@ -3,6 +3,7 @@
 #include <api/video/i420_buffer.h>
 
 // We use OpenCV for image buffer manipulation
+#include <opencv2/opencv.hpp>
 #include <opencv2/imgproc/imgproc.hpp>
 #include <opencv2/core/core.hpp>
 #include <cv_bridge/cv_bridge.h>
@@ -56,7 +57,7 @@ void RosVideoSource::sendFrame(const sensor_msgs::msg::Image::ConstSharedPtr& ms
     VideoSource::sendFrame(bgr, camera_time_us);
 }
 
-void RosVideoSource::sendFrame(const sensor_msgs::msg::CompressedImage::ConstSharedPtr& msg)
+void RosVideoSource::sendcompressedFrame(const sensor_msgs::msg::CompressedImage::ConstSharedPtr& msg)
 {
     // Decode the compressed image to a cv::Mat
     cv::Mat compressed_image = cv::imdecode(cv::Mat(msg->data), cv::IMREAD_COLOR);

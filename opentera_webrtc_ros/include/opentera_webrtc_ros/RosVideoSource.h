@@ -17,7 +17,7 @@ namespace opentera
     public:
         RosVideoSource(bool needsDenoising, bool isScreenCast);
         void sendFrame(const sensor_msgs::msg::Image::ConstSharedPtr& msg);
-        void sendFrame(const sensor_msgs::msg::CompressedImage::ConstSharedPtr& msg);
+        void sendcompressedFrame(const sensor_msgs::msg::CompressedImage::ConstSharedPtr& msg);
     };
 }
 
