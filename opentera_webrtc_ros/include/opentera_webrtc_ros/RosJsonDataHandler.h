@@ -28,6 +28,7 @@ namespace opentera
         float m_angular_multiplier;
 
         rclcpp::Publisher<std_msgs::msg::Bool>::SharedPtr m_stopPub;
+        rclcpp::Publisher<std_msgs::msg::Bool>::SharedPtr m_unlockPub;
         rclcpp::Publisher<std_msgs::msg::Bool>::SharedPtr m_startPub;
         rclcpp::Publisher<geometry_msgs::msg::Twist>::SharedPtr m_cmdVelPublisher;
         rclcpp::Publisher<opentera_webrtc_ros_msgs::msg::WaypointArray>::SharedPtr m_waypointsPub;

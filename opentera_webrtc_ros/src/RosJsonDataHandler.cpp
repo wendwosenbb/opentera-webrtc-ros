@@ -70,7 +70,7 @@ void RosJsonDataHandler::onWebRTCDataReceived(const opentera_webrtc_ros_msgs::ms
         // TODO: should this be a service instead of a topic message?
         std_msgs::msg::Bool msg;
         msg.data = serializedData["state"];
-        m_startPub->publish(msg);
+        m_unlockPub->publish(msg);
     }
     else if (serializedData["type"] == "start")
     {
