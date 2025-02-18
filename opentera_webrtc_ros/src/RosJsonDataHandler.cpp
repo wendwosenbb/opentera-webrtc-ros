@@ -8,7 +8,8 @@ RosJsonDataHandler::RosJsonDataHandler()
     : rclcpp::Node("json_data_handler"),
       m_linear_multiplier{static_cast<float>(this->declare_parameter("linear_multiplier", 0.15))},
       m_angular_multiplier{static_cast<float>(this->declare_parameter("angular_multiplier", 0.15))},
-      m_stopPub{this->create_publisher<std_msgs::msg::Bool>("stop", 1)},
+      m_stopPub{this->create_publisher<std_msgs::msg::Bool>("/disable_all_movement", 1)},
+      m_unlockPub{this->create_publisher<std_msgs::msg::Bool>("/enable_all_movement", 1)},
       m_startPub{this->create_publisher<std_msgs::msg::Bool>("start", 1)},
       m_cmdVelPublisher{this->create_publisher<geometry_msgs::msg::Twist>("cmd_vel", 1)},
       m_waypointsPub{this->create_publisher<opentera_webrtc_ros_msgs::msg::WaypointArray>("waypoints", 1)},
@@ -63,6 +64,13 @@ void RosJsonDataHandler::onWebRTCDataReceived(const opentera_webrtc_ros_msgs::ms
         std_msgs::msg::Bool msg;
         msg.data = serializedData["state"];
         m_stopPub->publish(msg);
+    }
+    else if (serializedData["type"] == "unlock")
+    {
+        // TODO: should this be a service instead of a topic message?
+        std_msgs::msg::Bool msg;
+        msg.data = serializedData["state"];
+        m_startPub->publish(msg);
     }
     else if (serializedData["type"] == "start")
     {
