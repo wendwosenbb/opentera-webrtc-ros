@@ -5,7 +5,7 @@
 // We use OpenCV for image buffer manipulation
 #include <opencv2/opencv.hpp>
 #include <opencv2/imgproc/imgproc.hpp>
-#include <opencv2/cudaimgproc.hpp>
+//#include <opencv2/cudaimgproc.hpp>
 #include <opencv2/core/core.hpp>
 #include <cv_bridge/cv_bridge.h>
 
