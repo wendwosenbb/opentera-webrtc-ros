@@ -23,7 +23,7 @@
 #include <opentera_webrtc_ros/RosNodeParameters.h>
 #include <opentera_webrtc_ros/RosSignalingServerConfiguration.h>
 #include <opentera_webrtc_ros/utils.h>
-
+#include "std_msgs/msg/bool.hpp"
 namespace opentera
 {
 
@@ -42,6 +42,7 @@ namespace opentera
         RosNodeParameters m_nodeParameters;
         rclcpp::Publisher<opentera_webrtc_ros_msgs::msg::PeerStatus>::SharedPtr m_peerStatusPublisher;
         std::unique_ptr<T> m_signalingClient;
+        rclcpp::Publisher<std_msgs::msg::Bool>::SharedPtr clientChangePublisher;
 
         virtual void connect();
         virtual void disconnect();
@@ -114,6 +115,9 @@ namespace opentera
 
         m_peerStatusPublisher =
             this->create_publisher<opentera_webrtc_ros_msgs::msg::PeerStatus>("webrtc_peer_status", 10);
+
+        clientChangePublisher = 
+            this->create_publisher<std_msgs::msg::Bool>("client_change", 10);
     }
 
     /**
@@ -446,6 +450,9 @@ namespace opentera
     void RosWebRTCBridge<T>::onRoomClientsChanged(const std::vector<RoomClient>& roomClients)
     {
         RCLCPP_INFO(this->get_logger(), " --> Signaling on room clients changed:\n");
+        std::msg::Bool msg;
+        msg.data = true;
+        clientChangePublisher->publish(msg);
         bool allClientsConnected = true;
         for (const auto& client : roomClients)
         {
