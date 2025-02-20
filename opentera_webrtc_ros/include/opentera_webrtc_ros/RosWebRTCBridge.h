@@ -450,7 +450,7 @@ namespace opentera
     void RosWebRTCBridge<T>::onRoomClientsChanged(const std::vector<RoomClient>& roomClients)
     {
         RCLCPP_INFO(this->get_logger(), " --> Signaling on room clients changed:\n");
-        std::msg::Bool msg;
+        std_msgs::msg::Bool msg;
         msg.data = true;
         clientChangePublisher->publish(msg);
         bool allClientsConnected = true;
