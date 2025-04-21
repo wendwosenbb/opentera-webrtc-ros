@@ -93,7 +93,7 @@ class LabelsManager(rclpy.node.Node):
         self.stored_labels_marker_pub = self.create_publisher(
             MarkerArray, "stored_labels_marker", 1)
 
-        self.database_path: str = self.declare_parameter("~database_path", "~/.ros/labels.yaml").get_parameter_value().string_value
+        self.database_path: str = self.declare_parameter("database_path", "~/.ros/labels.yaml").get_parameter_value().string_value
         self.get_logger().info(f"Database path being used: {self.database_path}")
         self.db: YamlDatabase[LabelData] = YamlDatabase(
             Path(self.database_path), LabelData)
