@@ -94,6 +94,7 @@ class LabelsManager(rclpy.node.Node):
             MarkerArray, "stored_labels_marker", 1)
 
         self.database_path: str = self.declare_parameter("~database_path", "~/.ros/labels.yaml").get_parameter_value().string_value
+        self.get_logger().info(f"Database path being used: {self.database_path}")
         self.db: YamlDatabase[LabelData] = YamlDatabase(
             Path(self.database_path), LabelData)
 
@@ -111,6 +112,7 @@ class LabelsManager(rclpy.node.Node):
         labels_text_json_message = {
             "type": "labels", "labels": labels_text}
         labels_text_msg = json.dumps(labels_text_json_message)
+        self.get_logger().info(f"Publishing labels text: {labels_text_msg}")
         self.stored_labels_text_pub.publish(String(data=labels_text_msg))
 
     def publish_stored_labels_marker(self) -> None:
