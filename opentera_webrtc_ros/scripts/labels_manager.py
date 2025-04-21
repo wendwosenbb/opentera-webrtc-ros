@@ -97,6 +97,9 @@ class LabelsManager(rclpy.node.Node):
         self.get_logger().info(f"Database path being used: {self.database_path}")
         self.db: YamlDatabase[LabelData] = YamlDatabase(
             Path(self.database_path), LabelData)
+        self.get_logger().info(f"Loaded {len(self.db)} labels from database:")
+        for entry in self.db.values():
+            self.get_logger().info(f"- {entry.label.name}: {entry.label.description}")
 
         self.pub_timer_stored_labels = self.create_timer(1, self.publish_stored_labels)
         self.pub_timer_stored_labels_text = self.create_timer(1, self.publish_stored_labels_text)
@@ -107,6 +110,7 @@ class LabelsManager(rclpy.node.Node):
         self.get_logger().info("Labels manager initialized")
 
     def publish_stored_labels_text(self) -> None:
+        self.get_logger().info("Timer fired: publish_stored_labels_text called")
         labels_text = [
             {"name": e.label.name, "description": e.label.description} for e in self.db.values()]
         labels_text_json_message = {
