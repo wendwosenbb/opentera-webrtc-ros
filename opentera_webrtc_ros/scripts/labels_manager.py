@@ -97,7 +97,6 @@ class LabelsManager(rclpy.node.Node):
         self.get_logger().info(f"Database path being used: {self.database_path}")
         self.db: YamlDatabase[LabelData] = YamlDatabase(
             Path(self.database_path), LabelData)
-        self.get_logger().info(f"Loaded {len(self.db)} labels from database:")
         for entry in self.db.values():
             self.get_logger().info(f"- {entry.label.name}: {entry.label.description}")
 
