@@ -1,14 +1,11 @@
 #!/usr/bin/env python3
 
 import rclpy
-import rclpy.exceptions
 import rclpy.node
-import rclpy.timer
 import json
 from pathlib import Path
 from opentera_webrtc_ros_msgs.msg import LabelSimple, LabelSimpleEdit
 from opentera_webrtc_ros_msgs.msg import Label, LabelArray
-import rclpy.timer
 from std_msgs.msg import String
 from geometry_msgs.msg import PoseStamped
 from visualization_msgs.msg import MarkerArray, Marker
@@ -98,7 +95,7 @@ class LabelsManager(rclpy.node.Node):
         self.db: YamlDatabase[LabelData] = YamlDatabase(
             Path(self.database_path), LabelData)
      
-        self.get_logger().info(f"Database loaded: {self.db}")
+        print(f"Database loaded: {self.db}")
 
         self.pub_timer_stored_labels = self.create_timer(1, self.publish_stored_labels)
         self.pub_timer_stored_labels_text = self.create_timer(1, self.publish_stored_labels_text)
