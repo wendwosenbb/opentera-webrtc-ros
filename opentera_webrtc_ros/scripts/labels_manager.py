@@ -97,8 +97,8 @@ class LabelsManager(rclpy.node.Node):
         self.get_logger().info(f"Database path being used: {self.database_path}")
         self.db: YamlDatabase[LabelData] = YamlDatabase(
             Path(self.database_path), LabelData)
-        for entry in self.db.data:
-            self.get_logger().info(f"- {entry.label.name}: {entry.label.description}")
+     
+        self.get_logger().info(f"Database loaded: {self.db}")
 
         self.pub_timer_stored_labels = self.create_timer(1, self.publish_stored_labels)
         self.pub_timer_stored_labels_text = self.create_timer(1, self.publish_stored_labels_text)
