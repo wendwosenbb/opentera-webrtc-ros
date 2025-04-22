@@ -110,13 +110,13 @@ class LabelsManager(rclpy.node.Node):
 
     def publish_stored_labels_text(self) -> None:
         self.get_logger().info("Timer fired: publish_stored_labels_text called")
-        labels_text = [
-            {"name": e.label.name, "description": e.label.description} for e in self.db.values()]
-        labels_text_json_message = {
-            "type": "labels", "labels": labels_text}
-        labels_text_msg = json.dumps(labels_text_json_message)
-        self.get_logger().info(f"Publishing labels text: {labels_text_msg}")
-        self.stored_labels_text_pub.publish(String(data=labels_text_msg))
+        #labels_text = [
+        #    {"name": e.label.name, "description": e.label.description} for e in self.db.values()]
+        #labels_text_json_message = {
+        #    "type": "labels", "labels": labels_text}
+        #labels_text_msg = json.dumps(labels_text_json_message)
+        #self.get_logger().info(f"Publishing labels text: {labels_text_msg}")
+        self.stored_labels_text_pub.publish(String(data="test message"))
 
     def publish_stored_labels_marker(self) -> None:
         markers = MarkerArray()
