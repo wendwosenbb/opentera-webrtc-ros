@@ -20,8 +20,15 @@ using namespace opentera;
 RosVideoSource::RosVideoSource(bool needsDenoising, bool isScreenCast)
     : VideoSource(VideoSourceConfiguration::create(needsDenoising, isScreenCast))
 {
+    nvjpegCreateSimple(&nvjpeg_handle_);
+    nvjpegJpegStateCreate(nvjpeg_handle_, &nvjpeg_state_);
 }
 
+RosVideoSource::~RosVideoSource()
+{
+    nvjpegJpegStateDestroy(nvjpeg_state_);
+    nvjpegDestroy(nvjpeg_handle_);
+}
 /**
  * @brief Process a frame received from ROS
  *
@@ -58,28 +65,82 @@ void RosVideoSource::sendFrame(const sensor_msgs::msg::Image::ConstSharedPtr& ms
     VideoSource::sendFrame(bgr, camera_time_us);
 }
 
+// void RosVideoSource::sendcompressedFrame(const sensor_msgs::msg::CompressedImage::ConstSharedPtr& msg)
+// {
+//     // Decode the compressed image to a cv::Mat
+//     cv::Mat compressed_image = cv::imdecode(cv::Mat(msg->data), cv::IMREAD_COLOR);
+    
+//     if (compressed_image.empty())
+//     {
+//         RCLCPP_ERROR(rclcpp::get_logger("RosVideoSource"), "Failed to decode compressed image");
+//         return;
+//     }
+
+//     // Convert to BGR format if needed
+//     cv::Mat bgr;
+//     if (msg->format.find("mono") != std::string::npos)  // Check if it's grayscale
+//     {
+//         cv::cvtColor(compressed_image, bgr, cv::COLOR_GRAY2BGR);
+//     }
+//     else
+//     {
+//         bgr = compressed_image;
+//     }
+
+//     int64_t camera_time_us = to_microseconds(msg->header.stamp);
+//     VideoSource::sendFrame(bgr, camera_time_us);
+// }
+
 void RosVideoSource::sendcompressedFrame(const sensor_msgs::msg::CompressedImage::ConstSharedPtr& msg)
 {
-    // Decode the compressed image to a cv::Mat
-    cv::Mat compressed_image = cv::imdecode(cv::Mat(msg->data), cv::IMREAD_COLOR);
-    
-    if (compressed_image.empty())
-    {
-        RCLCPP_ERROR(rclcpp::get_logger("RosVideoSource"), "Failed to decode compressed image");
+    const unsigned char* jpeg_data = msg->data.data();
+    size_t jpeg_size = msg->data.size();
+
+    int nComponents = 0;
+    nvjpegChromaSubsampling_t subsampling;
+    int widths[NVJPEG_MAX_COMPONENT], heights[NVJPEG_MAX_COMPONENT];
+
+    nvjpegStatus_t info_status = nvjpegGetImageInfo(nvjpeg_handle_, jpeg_data, jpeg_size,
+                                                    &nComponents, &subsampling, widths, heights);
+    if (info_status != NVJPEG_STATUS_SUCCESS) {
+        RCLCPP_ERROR(rclcpp::get_logger("RosVideoSource"), "Failed to get JPEG info");
         return;
     }
 
-    // Convert to BGR format if needed
-    cv::Mat bgr;
-    if (msg->format.find("mono") != std::string::npos)  // Check if it's grayscale
-    {
-        cv::cvtColor(compressed_image, bgr, cv::COLOR_GRAY2BGR);
-    }
-    else
-    {
-        bgr = compressed_image;
+    int width = widths[0];
+    int height = heights[0];
+
+    // Allocate output on GPU
+    uchar3* d_output;
+    cudaMalloc(&d_output, width * height * sizeof(uchar3));
+
+    nvjpegImage_t output_image;
+    memset(&output_image, 0, sizeof(output_image));
+    output_image.channel[0] = reinterpret_cast<unsigned char*>(d_output);
+    output_image.pitch[0] = width * 3;
+
+    cudaStream_t stream;
+    cudaStreamCreateWithFlags(&stream, cudaStreamNonBlocking);
+
+    nvjpegStatus_t decode_status = nvjpegDecode(nvjpeg_handle_, nvjpeg_state_,
+                                                jpeg_data, jpeg_size,
+                                                NVJPEG_OUTPUT_RGBI, &output_image, stream);
+
+    if (decode_status != NVJPEG_STATUS_SUCCESS) {
+        RCLCPP_ERROR(rclcpp::get_logger("RosVideoSource"), "nvJPEG decode failed");
+        cudaFree(d_output);
+        cudaStreamDestroy(stream);
+        return;
     }
 
+    cudaStreamSynchronize(stream);
+    cudaStreamDestroy(stream);
+
+    // Wrap it in cv::cuda::GpuMat and send
+    cv::cuda::GpuMat gpu_mat(height, width, CV_8UC3, d_output);
     int64_t camera_time_us = to_microseconds(msg->header.stamp);
-    VideoSource::sendFrame(bgr, camera_time_us);
+    VideoSource::sendFrame(gpu_mat, camera_time_us);
+
+    // Cleanup after send
+    cudaFree(d_output);
 }

@@ -24,6 +24,7 @@ elseif(NOT (${CMAKE_BUILD_TYPE} STREQUAL "Release" OR ${CMAKE_BUILD_TYPE} STREQU
 endif()
 
 # find dependencies
+find_package(CUDA REQUIRED)
 find_package(ament_cmake REQUIRED)
 
 find_package(rclcpp REQUIRED)
@@ -43,6 +44,14 @@ find_package(OpenCV REQUIRED core imgproc)
 
 add_definitions(-DWEBRTC_POSIX)
 
+# Explicitly find nvjpeg library
+find_library(NVJPEG_LIB nvjpeg
+  PATHS /usr/local/cuda/lib64 /usr/local/cuda-11.7/lib64
+  NO_DEFAULT_PATH
+)
+
+# Include CUDA headers
+include_directories(/usr/local/cuda/include /usr/local/cuda-11.7/include)
 # Disable tests because of conflicts with gtest with catkin
 set(OPENTERA_WEBRTC_ENABLE_TESTS OFF)
 # Disable examples
@@ -147,6 +156,8 @@ ament_target_dependencies(${PROJECT_NAME}_topic_streamer
 )
 target_link_libraries(${PROJECT_NAME}_topic_streamer
     ${opentera_webrtc_native_client_libs}
+    ${NVJPEG_LIB}
+    ${CUDA_LIBRARIES}     # includes cudart and other core CUDA libs
 )
 set_target_properties(${PROJECT_NAME}_topic_streamer PROPERTIES OUTPUT_NAME topic_streamer PREFIX "")
 install(TARGETS ${PROJECT_NAME}_topic_streamer DESTINATION lib/${PROJECT_NAME})
