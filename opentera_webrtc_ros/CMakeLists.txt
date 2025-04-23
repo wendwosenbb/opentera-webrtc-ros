@@ -24,6 +24,8 @@ elseif(NOT (${CMAKE_BUILD_TYPE} STREQUAL "Release" OR ${CMAKE_BUILD_TYPE} STREQU
 endif()
 
 # find dependencies
+set(CUDA_TOOLKIT_ROOT_DIR "/usr/local/cuda-11.7")
+
 find_package(CUDA REQUIRED)
 find_package(ament_cmake REQUIRED)
 
