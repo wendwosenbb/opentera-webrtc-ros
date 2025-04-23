@@ -4,7 +4,6 @@
 #include <OpenteraWebrtcNativeClient/Sources/VideoSource.h>
 #include <sensor_msgs/msg/image.hpp>
 #include <sensor_msgs/msg/compressed_image.hpp>
-#include <nvjpeg.h>
 
 namespace opentera
 {
@@ -19,10 +18,6 @@ namespace opentera
         RosVideoSource(bool needsDenoising, bool isScreenCast);
         void sendFrame(const sensor_msgs::msg::Image::ConstSharedPtr& msg);
         void sendcompressedFrame(const sensor_msgs::msg::CompressedImage::ConstSharedPtr& msg);
-
-    private:
-        nvjpegHandle_t nvjpeg_handle_;
-        nvjpegJpegState_t nvjpeg_state_;
     };
 }
 
