@@ -8,6 +8,8 @@ RosJsonDataHandler::RosJsonDataHandler()
     : rclcpp::Node("json_data_handler"),
       m_linear_multiplier{static_cast<float>(this->declare_parameter("linear_multiplier", 0.15))},
       m_angular_multiplier{static_cast<float>(this->declare_parameter("angular_multiplier", 0.15))},
+      m_startupdockerPub{this->create_publisher<std_msgs::msg::Bool>("/start_all_containers", 1)},
+      m_shutdowndockerPub{this->create_publisher<std_msgs::msg::Bool>("/stop_all_containers", 1)},
       m_stopPub{this->create_publisher<std_msgs::msg::Bool>("/disable_all_movement", 1)},
       m_unlockPub{this->create_publisher<std_msgs::msg::Bool>("/enable_all_movement", 1)},
       m_capdeadImgPub{this->create_publisher<std_msgs::msg::Bool>("/capture_dead_image", 1)},
@@ -75,6 +77,20 @@ void RosJsonDataHandler::onWebRTCDataReceived(const opentera_webrtc_ros_msgs::ms
         std_msgs::msg::Bool msg;
         msg.data = serializedData["state"];
         m_unlockPub->publish(msg);
+    }
+    else if (serializedData["type"] == "startupdocker")
+    {
+        // TODO: should this be a service instead of a topic message?
+        std_msgs::msg::Bool msg;
+        msg.data = serializedData["state"];
+        m_startupdockerPub->publish(msg);
+    }
+    else if (serializedData["type"] == "shutdowndocker")
+    {
+        // TODO: should this be a service instead of a topic message?
+        std_msgs::msg::Bool msg;
+        msg.data = serializedData["state"];
+        m_shutdowndockerPub->publish(msg);
     }
     else if (serializedData["type"] == "CapDeadImg")
     {
