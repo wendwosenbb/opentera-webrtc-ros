@@ -29,6 +29,7 @@ namespace opentera
 
         rclcpp::Publisher<std_msgs::msg::Bool>::SharedPtr m_startupdockerPub;
         rclcpp::Publisher<std_msgs::msg::Bool>::SharedPtr m_shutdowndockerPub;
+        rclcpp::Publisher<std_msgs::msg::String>::SharedPtr m_heartbeatpongPub;
 
         rclcpp::Publisher<std_msgs::msg::Bool>::SharedPtr m_stopPub;
         rclcpp::Publisher<std_msgs::msg::Bool>::SharedPtr m_unlockPub;

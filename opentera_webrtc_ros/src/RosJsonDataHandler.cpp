@@ -10,6 +10,7 @@ RosJsonDataHandler::RosJsonDataHandler()
       m_angular_multiplier{static_cast<float>(this->declare_parameter("angular_multiplier", 0.15))},
       m_startupdockerPub{this->create_publisher<std_msgs::msg::Bool>("/start_all_containers", 1)},
       m_shutdowndockerPub{this->create_publisher<std_msgs::msg::Bool>("/stop_all_containers", 1)},
+      m_heartbeatpongPub{this->create_publisher<std_msgs::msg::String>("/heartbeat_pong", 1)},
       m_stopPub{this->create_publisher<std_msgs::msg::Bool>("/disable_all_movement", 1)},
       m_unlockPub{this->create_publisher<std_msgs::msg::Bool>("/enable_all_movement", 1)},
       m_capdeadImgPub{this->create_publisher<std_msgs::msg::Bool>("/capture_dead_image", 1)},
@@ -70,6 +71,13 @@ void RosJsonDataHandler::onWebRTCDataReceived(const opentera_webrtc_ros_msgs::ms
         std_msgs::msg::Bool msg;
         msg.data = serializedData["state"];
         m_stopPub->publish(msg);
+    }
+    else if (serializedData["type"] == "heartbeat")
+    {
+        // TODO: should this be a service instead of a topic message?
+        std_msgs::msg::String msg;
+        msg.data = serializedData["label"];
+        m_heartbeatpongPub->publish(msg);
     }
     else if (serializedData["type"] == "unlock")
     {
