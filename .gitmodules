@@ -4,7 +4,7 @@
 [submodule "opentera-webrtc-demos/opentera-webrtc-teleop-frontend"]
     path = opentera_webrtc_demos/opentera-webrtc-teleop-frontend
     url = https://github.com/wendwosenbb/opentera-webrtc-teleop-frontend.git
-    branch = modify-frontend
+    branch = fix-package-dependency-issue
 [submodule "opentera_protobuf_messages/opentera_messages"]
 	path = opentera_protobuf_messages/opentera_messages
 	url = https://github.com/introlab/opentera_messages.git
