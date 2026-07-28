@@ -140,6 +140,7 @@ void RosJsonDataHandler::onWebRTCDataReceived(const opentera_webrtc_ros_msgs::ms
         geometry_msgs::msg::Twist twist;
         // Multiply by 0.15 in order to control the speed of the movement
         twist.linear.x = static_cast<double>(serializedData["x"]) * m_linear_multiplier;
+        twist.linear.y = static_cast<double>(serializedData["y"]) * m_linear_multiplier;
         twist.angular.z = static_cast<double>(serializedData["yaw"]) * m_angular_multiplier;
         m_cmdVelPublisher->publish(twist);
     }
