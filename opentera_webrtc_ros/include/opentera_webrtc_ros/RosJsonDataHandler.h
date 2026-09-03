@@ -36,6 +36,7 @@ namespace opentera
         rclcpp::Publisher<std_msgs::msg::Bool>::SharedPtr m_capdeadImgPub;
         rclcpp::Publisher<std_msgs::msg::Bool>::SharedPtr m_GetRobotPosePub;
         rclcpp::Publisher<std_msgs::msg::Bool>::SharedPtr m_ToggleBumpStopPub;
+        rclcpp::Publisher<std_msgs::msg::Bool>::SharedPtr m_ToggleMissionModePub;
         rclcpp::Publisher<std_msgs::msg::Float32>::SharedPtr m_SpinnerSpeedPub;
 
         rclcpp::Publisher<std_msgs::msg::Bool>::SharedPtr m_startPub;

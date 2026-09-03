@@ -16,6 +16,7 @@ RosJsonDataHandler::RosJsonDataHandler()
       m_capdeadImgPub{this->create_publisher<std_msgs::msg::Bool>("/capture_dead_image", 1)},
       m_GetRobotPosePub{this->create_publisher<std_msgs::msg::Bool>("/get_current_pose", 1)},
       m_ToggleBumpStopPub{this->create_publisher<std_msgs::msg::Bool>("/toggle_bump_stop", 1)},
+      m_ToggleMissionModePub{this->create_publisher<std_msgs::msg::Bool>("/toggle_mission_mode", 1)},
       m_SpinnerSpeedPub{this->create_publisher<std_msgs::msg::Float32>("/motors/set_spinner_vel", 1)},
       m_startPub{this->create_publisher<std_msgs::msg::Bool>("start", 1)},
       m_cmdVelPublisher{this->create_publisher<geometry_msgs::msg::Twist>("cmd_vel", 1)},
@@ -113,6 +114,13 @@ void RosJsonDataHandler::onWebRTCDataReceived(const opentera_webrtc_ros_msgs::ms
         std_msgs::msg::Bool msg;
         msg.data = serializedData["state"];
         m_GetRobotPosePub->publish(msg);
+    }
+    else if (serializedData["type"] == "toggle_mission_mode")
+    {
+        // TODO: should this be a service instead of a topic message?
+        std_msgs::msg::Bool msg;
+        msg.data = serializedData["state"];
+        m_ToggleMissionModePub->publish(msg);
     }
     else if (serializedData["type"] == "ToggleBumpStop")
     {
