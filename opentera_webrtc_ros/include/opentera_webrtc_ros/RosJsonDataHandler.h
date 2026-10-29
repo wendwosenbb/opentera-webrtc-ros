@@ -33,7 +33,7 @@ namespace opentera
 
         rclcpp::Publisher<std_msgs::msg::Bool>::SharedPtr m_stopPub;
         rclcpp::Publisher<std_msgs::msg::Bool>::SharedPtr m_unlockPub;
-        rclcpp::Publisher<std_msgs::msg::Bool>::SharedPtr m_capdeadImgPub;
+        rclcpp::Publisher<std_msgs::msg::String>::SharedPtr m_capBarnEventPub;
         rclcpp::Publisher<std_msgs::msg::Bool>::SharedPtr m_GetRobotPosePub;
         rclcpp::Publisher<std_msgs::msg::Bool>::SharedPtr m_ToggleBumpStopPub;
         rclcpp::Publisher<std_msgs::msg::Bool>::SharedPtr m_ToggleMissionModePub;

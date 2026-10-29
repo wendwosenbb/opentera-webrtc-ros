@@ -13,7 +13,7 @@ RosJsonDataHandler::RosJsonDataHandler()
       m_heartbeatpongPub{this->create_publisher<std_msgs::msg::String>("/heartbeat_pong", 1)},
       m_stopPub{this->create_publisher<std_msgs::msg::Bool>("/disable_all_movement", 1)},
       m_unlockPub{this->create_publisher<std_msgs::msg::Bool>("/enable_all_movement", 1)},
-      m_capdeadImgPub{this->create_publisher<std_msgs::msg::Bool>("/capture_dead_image", 1)},
+      m_capBarnEventPub{this->create_publisher<std_msgs::msg::String>("/capture_barn_event", 1)},
       m_GetRobotPosePub{this->create_publisher<std_msgs::msg::Bool>("/get_current_pose", 1)},
       m_ToggleBumpStopPub{this->create_publisher<std_msgs::msg::Bool>("/toggle_bump_stop", 1)},
       m_ToggleMissionModePub{this->create_publisher<std_msgs::msg::Bool>("/toggle_mission_mode", 1)},
@@ -101,12 +101,31 @@ void RosJsonDataHandler::onWebRTCDataReceived(const opentera_webrtc_ros_msgs::ms
         msg.data = serializedData["state"];
         m_shutdowndockerPub->publish(msg);
     }
-    else if (serializedData["type"] == "CapDeadImg")
+    else if (serializedData["type"] == "CapEventImg")
     {
-        // TODO: should this be a service instead of a topic message?
-        std_msgs::msg::Bool msg;
-        msg.data = serializedData["state"];
-        m_capdeadImgPub->publish(msg);
+        // Categorized capture from the operator UI: {type, state, category, note}.
+        // Forwarded to mark_dead as a JSON string {"category": ..., "notes": ...}
+        // on /capture_barn_event. The note may be empty.
+        if (serializedData.value("state", false))
+        {
+            if (!serializedData.contains("category") || !serializedData["category"].is_string())
+            {
+                RCLCPP_ERROR(this->get_logger(), "CapEventImg without a string 'category', ignoring");
+            }
+            else
+            {
+                nlohmann::json event;
+                event["category"] = serializedData["category"];
+                const char* noteKey = serializedData.contains("note") ? "note" : "notes";
+                event["notes"] = serializedData.contains(noteKey) && serializedData[noteKey].is_string()
+                                     ? serializedData[noteKey]
+                                     : nlohmann::json("");
+
+                std_msgs::msg::String msg;
+                msg.data = event.dump();
+                m_capBarnEventPub->publish(msg);
+            }
+        }
     }
     else if (serializedData["type"] == "GetRobotPose")
     {
